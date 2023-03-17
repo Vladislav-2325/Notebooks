@@ -83,5 +83,40 @@ class MainActivity : AppCompatActivity() {
         // Переключение на доп активность создания заметки для модификации
         startActivityForResult(intent, 200)
     }
+    //эта чтобы обработать долгие нажатия как удаление записки
+    private fun onListItemLongClick(position: Int) {
+        notes.removeAt(position)
+        Toast.makeText(this, "Deleted "+ position, Toast.LENGTH_SHORT).show()
+        onStart()
+    }
 
+    private fun onChBoxClick(position: Int) {
+        when (notes[position].fav)
+        {
+            true-> notes[position].fav = false
+            false-> notes[position].fav = true
+        }
+        notes.sortByDescending { it.fav }
+        onStart()
+    }
+
+    private fun Save(){
+        val sharedPreference =  getSharedPreferences("Notes", Context.MODE_PRIVATE)
+        var editor = sharedPreference.edit()
+        editor.putString("Notes", Gson().toJson(notes));
+        editor.commit();
+    }
+
+    private fun Load(){
+        val sharedPreference =  getSharedPreferences("Notes", Context.MODE_PRIVATE)
+        val notes_str =  sharedPreference.getString("Notes",Gson().toJson(notes))
+        val sType = object : TypeToken<MutableList<ElemNote>>() { }.type
+        notes = Gson().fromJson<MutableList<ElemNote>>(notes_str, sType)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        //сохранение заметок в SHP
+        Save()
+    }
 }
