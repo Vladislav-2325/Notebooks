@@ -43,5 +43,36 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(intent, 100)
         }
     }
+    //эта чтобы забрать результат из второй активности заметок
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            val newnote = data?.extras?.getSerializable("NewNote") as ElemNote?
+            if (newnote != null) {
+                when(requestCode) {
+                    100->{
+                        Toast.makeText(
+                            this@MainActivity,
+                            "New note created! ${newnote.theme}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        notes.add(newnote)
+                    }
+                    200-> {
+                        val index = data?.extras?.getInt("EditIndex")
+                        if (index!=null) {
+                            Toast.makeText(
+                                this@MainActivity,
+                                "Note was updated! ${newnote.theme}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            notes[index] = newnote
+                        }
+                    }
+                }
+                Save()
+            }
+        }
+    }
 
 }
