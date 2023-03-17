@@ -74,5 +74,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+    //эта чтобы обработать обычные нажатия как модификацию записки
+    private fun onListItemClick(position: Int) {
+        val intent = Intent(this, MainActivity2::class.java)
+        Toast.makeText(this, "Edited "+ position, Toast.LENGTH_SHORT).show()
+        intent.putExtra("EditNote",notes[position] as Serializable)
+        intent.putExtra("Index",position)
+        // Переключение на доп активность создания заметки для модификации
+        startActivityForResult(intent, 200)
+    }
 
 }
